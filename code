@@ -1,0 +1,84 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler,PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+%matplotlib inline
+
+file_name='https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DA0101EN-SkillsNetwork/labs/FinalModule_Coursera/data/kc_house_data_NaN.csv'
+df=pd.read_csv(file_name)
+print(df.head())
+
+#Question 1
+df.dtypes
+
+#Question 2
+df.drop(['id', 'Unnamed: 0'], axis=1, inplace=True)
+df.describe()
+
+#Question 3
+df.value_counts('floors').to_frame()
+
+#Question 4
+box = sns.boxplot(data=df, y=df.price, x=df.waterfront, hue =  df.waterfront)
+box.set(ylim=(50000,5000000))
+plt.title("Non-Waterfront vs. Waterfront Home Prices (in millions)")
+plt.show()
+
+#Question 5
+reg = sns.regplot(x=df.sqft_above, y=df.price, data=df)
+reg.set(ylim=(0,5000000))
+plt.title("Square Footage vs. Price")
+plt.show()
+
+df.corr()['price'].sort_values()
+#longitude is most closely correlated attibute to price
+X = df[['long']]
+Y = df['price']
+
+lm = LinearRegression()
+lm.fit(X,Y)
+#lm.score(X,Y)
+#R^2 = 0.000467
+
+#Question 6 
+A = df[['sqft_living']]
+B = df[['price']]
+
+lm = LinearRegression()
+lm.fit(A,B)
+lm.score(A,B)
+#R^2 = .49285
+width = 12
+height = 10
+plt.figure(figsize=(width, height))
+sns.regplot(x="sqft_living", y="price", data=df)
+plt.ylim(0,5000000)
+plt.title('Square Ft Living vs. Price Linear Regression')
+plt.show()
+
+#Question 7
+features =df[["floors", "waterfront","lat" ,"bedrooms" ,"sqft_basement" ,"view" ,"bathrooms","sqft_living15","sqft_above","grade","sqft_living"]]     
+Y = df['price']
+lm,fit(Z,Y)
+
+
+Yhat=lm.predict(Z)
+Yhat[0:5]
+lm.coef_
+width = 12
+height = 10
+plt.figure(figsize=(width, height))
+
+
+ax1 = sns.distplot(df['price'], hist=False, color="r", label="Actual Value")
+sns.distplot(Yhat, hist=False, color="b", label="Fitted Values" , ax=ax1)
+
+
+plt.title('Actual vs Fitted Values for Price')
+plt.xlabel('Price (in dollars)')
+plt.ylabel('Proportion of Cars')
+
+plt.show()
